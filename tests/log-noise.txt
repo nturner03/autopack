@@ -1,0 +1,11 @@
+# Known log noise: ERROR/FATAL lines that the `log_clean` check (scripts/checks.py)
+# and pack-log-triage do not count as new errors. One Python regex per line,
+# matched anywhere in the log line (re.search); `#` starts a comment line.
+#
+# Add an entry only once the line is confirmed harmless, with a comment that
+# names the condition it appears under and the evidence (test record, decision
+# or gotcha). Keep patterns narrow: match the message, not just the logger.
+
+# Netty on the server when the headless client is killed or stopped: the
+# client's socket closing, not a fault.
+Exception caught in connection

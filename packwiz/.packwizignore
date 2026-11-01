@@ -1,0 +1,11 @@
+# Files under packwiz/ that must never ship to clients/servers.
+*.md
+.gitkeep
+# KubeJS instance-generated files
+kubejs/config/
+kubejs/exported/
+kubejs/local/
+kubejs/*/main.js
+# Secrets / per-instance bridge config
+config/mcpfabric.config.json
+kubejs/config/web_server.json

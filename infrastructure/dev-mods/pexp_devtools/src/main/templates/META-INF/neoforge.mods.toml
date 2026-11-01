@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+# Dev-only agent tooling. Installed on the dev server and the headless client
+# outside packwiz; never shipped. A client or server without it may still
+# connect (no registries, no network payloads).
+displayTest="IGNORE_ALL_VERSION"
+description='''
+Test infrastructure for agent-built modpacks: /pexp dump (loaded recipes, tags, loot tables and ids as JSON for scripts/recipe_index.py) and the /studio client capture commands. Never part of a pack.
+'''
+
+[[dependencies.${mod_id}]]
+    modId="neoforge"
+    type="required"
+    versionRange="[${neo_version},)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"

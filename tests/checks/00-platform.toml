@@ -1,0 +1,26 @@
+# Platform checks: the dev runtime itself. They hold for any pack on this
+# template; keep them first (00-) so a broken platform shows up at the top.
+# Format and kinds: tests/README.md. Run: scripts/checks.py run
+
+[[check]]
+id = "platform.log-clean"
+why = "AGENTS.md Live-state rules: a deploy that logs new errors is not healthy (allowlist: tests/log-noise.txt)"
+kind = "log_clean"
+
+[[check]]
+id = "platform.pexp-devtools-loaded"
+why = "infrastructure/dev-mods/pexp_devtools: /pexp dump feeds every dump-based check and recipe_index.py --live"
+kind = "mod_loaded"
+mod = "pexp_devtools"
+
+[[check]]
+id = "platform.mcpfabric-loaded"
+why = "AGENTS.md Toolchain facts: MCPFabric is the agents' bridge to the server"
+kind = "mod_loaded"
+mod = "mcpfabric"
+
+[[check]]
+id = "platform.vanilla-recipes-loaded"
+why = "sanity: the dump holds vanilla data (delete this row if the pack deliberately removes the crafting table recipe)"
+kind = "recipe_exists"
+recipe = "minecraft:crafting_table"

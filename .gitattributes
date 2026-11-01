@@ -1,0 +1,6 @@
+# packwiz hashes file bytes; CRLF on any machine would desync index.toml.
+* text=auto eol=lf
+*.jar binary
+*.png binary
+*.nbt binary
+*.ogg binary

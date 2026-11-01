@@ -1,0 +1,6 @@
+# Dev server heap. Raise Xmx if spark/GC logs show pressure as the pack grows.
+-Xms2G
+-Xmx6G
+-XX:+UseG1GC
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=./crash-reports

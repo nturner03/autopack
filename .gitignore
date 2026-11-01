@@ -1,0 +1,42 @@
+# Runtime state (never committed)
+infrastructure/dev-server/server/
+infrastructure/dev-server/backups/
+infrastructure/.state/
+infrastructure/cache/
+infrastructure/headless-client/hmc/
+infrastructure/headless-client/instance/
+infrastructure/headless-client/recordings/
+.claude/scratch/
+.claude/settings.local.json
+.claude/worktrees/
+docs/local/
+__pycache__/
+*.pyc
+.venv/
+
+# Jars: only custom-mod builds deliberately shipped in the pack are tracked.
+*.jar
+!packwiz/mods/*.jar
+# Gradle projects under custom-mods/ keep their wrapper jar.
+!custom-mods/*/gradle/wrapper/gradle-wrapper.jar
+custom-mods/*/build/
+custom-mods/*/run/
+custom-mods/*/.gradle/
+custom-mods/*/runs/
+# Dev-only tool mods (agent infrastructure): source tracked, builds not.
+!infrastructure/dev-mods/*/gradle/wrapper/gradle-wrapper.jar
+infrastructure/dev-mods/*/build/
+infrastructure/dev-mods/*/run/
+infrastructure/dev-mods/*/.gradle/
+infrastructure/dev-mods/*/runs/
+
+# KubeJS / packwiz generated files if anything ever runs inside packwiz/
+packwiz/kubejs/config/
+packwiz/kubejs/exported/
+packwiz/kubejs/local/
+packwiz/**/main.js
+
+# IDE launch configs (contain absolute paths)
+.eclipse/
+.idea/
+.vscode/
