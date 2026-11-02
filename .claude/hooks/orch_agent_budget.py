@@ -26,7 +26,7 @@ Files under ``.claude/scratch/`` and outside the project are exempt from the
 read and write rules. Anything the hook cannot determine (no agent identity,
 an unreadable transcript, a parse error) allows the call.
 
-Vendored from claude-orch; wired in ``.claude/settings.json`` with
+Wired in ``.claude/settings.json`` with
 ``--prefix pack-``.
 """
 

@@ -37,7 +37,7 @@ An ``answer`` ref is ``brief-<n>:<qid>``, ``<agent_id>:<qid>`` or a bare
 ``brief-<n>`` (every question of that brief's latest asking return).
 
 ``--root DIR`` overrides the project root (default ``$CLAUDE_PROJECT_DIR``,
-else the current directory). Stdlib only; vendored from claude-orch.
+else the current directory). Stdlib only.
 """
 
 from __future__ import annotations

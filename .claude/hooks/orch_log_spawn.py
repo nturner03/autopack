@@ -21,7 +21,7 @@ names a task but no brief is recorded with ``-`` as its brief. orch-fleet's
 
 Any failure is swallowed: logging must never block a spawn.
 
-Vendored from claude-orch; wired in ``.claude/settings.json`` with
+Wired in ``.claude/settings.json`` with
 ``--prefix pack-``.
 """
 

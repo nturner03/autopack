@@ -65,16 +65,24 @@ The Claude Code hooks and helper scripts (`.claude/hooks/`,
 
 ## Starting an experiment
 
-1. **Copy and init:**
+1. **Clone and start fresh history:**
 
    ```sh
-   cp -r path/to/template path/to/experiments/<name>
-   cd path/to/experiments/<name>
+   git clone https://github.com/nturner03/autopack.git experiments/<name>
+   cd experiments/<name>
+   rm -rf .git
    git init && git add -A && git commit -m "chore: experiment scaffolding from template"
    ```
 
-   The directory name becomes the default tmux prefix (`pexp-<name>-*`) and
-   the dev server's MOTD.
+   Dropping `.git` gives the experiment its own history and no `origin`
+   remote (the agents never push or touch remotes; add one yourself if you
+   want). The directory name becomes the default tmux prefix
+   (`pexp-<name>-*`) and the dev server's MOTD.
+
+   Running several experiments? Keep them side by side in one parent
+   directory (for example `experiments/`). `scripts/doctor.sh` checks for
+   port clashes with these sibling directories, and agents may read them
+   (never write) for format and method.
 
 2. **Write the charter:** fill in `docs/charter.md` → "The owner's request"
    and "Requirements, as rules", and delete the template defaults you don't
@@ -166,15 +174,14 @@ gitignored. Each experiment downloads its own Minecraft client (~1 GB in
 ## Keeping the template current
 
 Improvements made inside an experiment (a script fix, a new gotcha, a better
-skill) don't flow back automatically. When one is generic, port it here by
-hand, and keep pack-specific content (mod names, story, decisions beyond
-0001) out of this directory.
+skill) don't flow back automatically. If you keep your own copy of this
+template, port generic fixes into it by hand, and keep pack-specific content
+(mod names, story, decisions beyond 0001) out of it.
 
 ## License
 
-[MIT](LICENSE). The files in `.claude/hooks/` and `.claude/scripts/` are
-vendored from claude-orch under the same license. Third-party pieces the
-scripts download at install time (Minecraft, NeoForge, MCPFabric,
-HeadlessMC, VirtualGL, packwiz-installer, mods) keep their own licenses;
+[MIT](LICENSE). Third-party pieces the scripts download at install time
+(Minecraft, NeoForge, MCPFabric, HeadlessMC, VirtualGL, packwiz-installer,
+mods) keep their own licenses;
 `infrastructure/dev-server/bin/install.sh` writes `eula=true`: running
 it means you accept the [Minecraft EULA](https://www.minecraft.net/eula).

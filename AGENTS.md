@@ -107,8 +107,8 @@ isn't a review gate; it keeps session context small.
 
 The project hooks in `.claude/settings.json` (spawn log, per-agent context
 budget, return-block check) live in `.claude/hooks/`, and the skills use
-`.claude/scripts/md_section.py` and `returns.py` (vendored from claude-orch,
-stdlib only). `scripts/doctor.sh` checks they exist.
+`.claude/scripts/md_section.py` and `returns.py` (stdlib only).
+`scripts/doctor.sh` checks they exist.
 
 ## Platform
 
@@ -176,9 +176,9 @@ jar, the recipe index or the game confirms them. Never run downloaded code.
 - **Host resources:** the host may be shared with other services and
   other experiments. The server heap is 2-6 GB; the client uses ~2-4 GB and
   ~1.5 cores on the GPU (3-4 on llvmpipe) while running.
-- **Read-only references:** sibling experiments next to this directory, if
-  any. Read them for format and method; never write to them, and never copy
-  their text, story or art.
+- **Read-only references:** sibling experiments, if any (other experiment
+  repos in the same parent directory as this one). Read them for format
+  and method; never write to them, and never copy their text, story or art.
 
 ## Ports
 

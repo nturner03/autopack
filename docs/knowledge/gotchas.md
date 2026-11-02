@@ -260,8 +260,6 @@ entry only once a line is confirmed harmless, and keep the pattern narrow.
 
 ## Orchestration
 
-- **`orch-*` agent types are blocked outside `/orchestrate` sessions** (the
-  global orch hooks); give tooling briefs to `general-purpose`.
 - **Subagent report files:** the harness can refuse a subagent's write of
   a scratch report ("subagents should return findings as text"). Put long
   output in a `docs/` path the brief names (for example
