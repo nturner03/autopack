@@ -7,7 +7,7 @@ set -uo pipefail
 REPO=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 # Optional: a host port inventory file to check the ports against. Unset = skip.
 INVENTORY=${PEXP_PORT_INVENTORY:-}
-MCF_DIR=${PEXP_MCPFABRIC_DIR:-$HOME/tools/mcpfabric}
+MCF_DIR=${PEXP_MCPFABRIC_DIR:-}
 JAVA21=${PEXP_JAVA:-/usr/lib/jvm/java-21-openjdk-amd64/bin/java}
 fails=0
 ok() { echo "ok    $*"; }
@@ -37,8 +37,12 @@ fi
 echo "== MCPFabric and Claude Code"
 node=$(command -v node || ls -1d "$HOME"/.nvm/versions/node/*/bin/node 2>/dev/null | sort -V | tail -1)
 [ -n "$node" ] && ok "node ($node)" || fail "node missing (MCP servers in .mcp.json)"
-[ -f "$MCF_DIR/mcp-server/dist/index.js" ] && ok "MCPFabric MCP server ($MCF_DIR)" || fail "$MCF_DIR/mcp-server/dist/index.js missing (.mcp.json; clone https://github.com/denfry/mcpfabric and build mcp-server, or set PEXP_MCPFABRIC_DIR)"
-[ -f "$MCF_DIR/mcp-server/src/tools.ts" ] && ok "MCPFabric tool table (scripts/mcf.py)" || fail "$MCF_DIR/mcp-server/src/tools.ts missing (scripts/mcf.py)"
+if [ -z "$MCF_DIR" ]; then
+  fail "PEXP_MCPFABRIC_DIR not set (path to your MCPFabric checkout; install per https://github.com/denfry/mcpfabric)"
+else
+  [ -f "$MCF_DIR/mcp-server/dist/index.js" ] && ok "MCPFabric MCP server ($MCF_DIR)" || fail "$MCF_DIR/mcp-server/dist/index.js missing (.mcp.json; build MCPFabric's mcp-server per https://github.com/denfry/mcpfabric)"
+  [ -f "$MCF_DIR/mcp-server/src/tools.ts" ] && ok "MCPFabric tool table (scripts/mcf.py)" || fail "$MCF_DIR/mcp-server/src/tools.ts missing (scripts/mcf.py)"
+fi
 for f in hooks/orch_agent_budget.py hooks/orch_log_spawn.py hooks/orch_check_return_block.py scripts/md_section.py scripts/returns.py; do
   [ -e "$REPO/.claude/$f" ] && ok ".claude/$f" || fail ".claude/$f missing (.claude/settings.json hooks and skills use it)"
 done

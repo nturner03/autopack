@@ -8,7 +8,7 @@
 #   PEXP_PACK_TOML   pack.toml to install from (default <repo>/packwiz/pack.toml)
 #   PEXP_JAVA        Java executable for the game (default picked from the MC version)
 #   PEXP_PACKWIZ     packwiz binary (default ~/go/bin/packwiz)
-#   PEXP_MCPFABRIC_DIR  MCPFabric checkout with mcp-server built (default ~/tools/mcpfabric;
+#   PEXP_MCPFABRIC_DIR  MCPFabric checkout with mcp-server built (required, no default;
 #                    read by .mcp.json, scripts/mcf.py and scripts/doctor.sh)
 
 set -euo pipefail

@@ -27,8 +27,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 TOKEN_FILE = REPO / "infrastructure" / ".state" / "mcpfabric-token"
-MCPFABRIC_DIR = Path(os.environ.get("PEXP_MCPFABRIC_DIR") or Path.home() / "tools" / "mcpfabric")
-TOOLS_TS = MCPFABRIC_DIR / "mcp-server" / "src" / "tools.ts"
+MCPFABRIC_DIR = os.environ.get("PEXP_MCPFABRIC_DIR", "")
 def project_env() -> dict[str, str]:
     """KEY=value pairs from infrastructure/project.env (ports, LAN host)."""
     out = {}
@@ -44,7 +43,9 @@ def project_env() -> dict[str, str]:
 
 
 def tool_methods() -> dict[str, str]:
-    text = TOOLS_TS.read_text()
+    if not MCPFABRIC_DIR:
+        sys.exit("error: PEXP_MCPFABRIC_DIR not set (path to your MCPFabric checkout)")
+    text = (Path(MCPFABRIC_DIR) / "mcp-server" / "src" / "tools.ts").read_text()
     return dict(re.findall(r'name:\s*"([a-z_]+)",\s*method:\s*"([A-Za-z_.]+)"', text))
 
 

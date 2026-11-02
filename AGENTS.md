@@ -152,7 +152,7 @@ jar, the recipe index or the game confirms them. Never run downloaded code.
   Run it from `packwiz/`.
 - **Node and MCP:** `node` on PATH, else the newest nvm install
   (`~/.nvm/versions/node/`). `.mcp.json` runs MCPFabric's MCP server from
-  `$PEXP_MCPFABRIC_DIR/mcp-server/dist/` (default `~/tools/mcpfabric`) as
+  `$PEXP_MCPFABRIC_DIR/mcp-server/dist/` (required, no default) as
   `mc-server` (bridge `SERVER_BRIDGE_PORT`) and `mc-client` (bridge
   `CLIENT_BRIDGE_PORT`), reading both ports from
   `infrastructure/project.env` and the token from

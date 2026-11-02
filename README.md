@@ -2,17 +2,45 @@
 
 A starting point for an autonomous modpack experiment: a team of Claude Code
 agents designs and builds a whole Minecraft modpack (mods, story, recipes,
-quests, art and balance) on a fixed platform, **Minecraft 1.21.1 on NeoForge
-21.1.265**. The agents test in game themselves through a dev server and a
-headless client driven by MCPFabric, and ask you only for what a person has
-to judge.
+quests, art and balance). It targets a fixed platform, **Minecraft 1.21.1 on
+NeoForge 21.1.265**. The agents test in game themselves through a dev server
+and a headless client driven by MCPFabric, and ask you only for what a person
+has to judge.
 
 > **Status: experiment.** This template has only been run on one Linux
-> host. Expect rough edges, and read the
-> scripts before running them.
+> host. Expect rough edges, and read the scripts before running them.
 
 Your rules for the agents go in [docs/charter.md](docs/charter.md); their
 working guide is [AGENTS.md](AGENTS.md).
+
+## What to expect
+
+You write a charter describing the pack you want; the agents do the rest in
+phases, one phase per session at most, and you start every session. The
+template ships with the first two phases in
+[docs/roadmap.md](docs/roadmap.md):
+
+- **Phase 0 - Foundations:** a pack name, premise and core mod roster,
+  booting on the dev server with the headless client joined.
+- **Phase 1 - Design:** a complete, reviewed set of design docs (story,
+  roster, progression, recipes, quests, balance, art direction) and a
+  roadmap the agents write for every phase through release.
+
+From Phase 2 on the agents implement that roadmap: mods, configs, KubeJS
+recipes, quests, textures and custom mods, each verified in game, with a
+commit per verified item. Along the way they queue playtests for you. A phase
+can take several sessions, and a full pack takes many.
+
+### Cost
+
+This is a long-running, token-heavy workload. The main session runs as the
+orchestrator on whatever model you start Claude Code with, and it spawns
+subagents for most of the work: Opus for the designer and reviewer, Sonnet
+for most others (Opus for hero UI art and other tiered-up briefs), Haiku for
+cheap lookups. You need a Claude plan with Opus access, and usage adds up over
+the many sessions a pack takes. To spend less, lower the `model` and `effort`
+defaults in the frontmatter of `.claude/agents/*.md` (expect lower-quality
+design and review).
 
 ## What's in the box
 
@@ -44,14 +72,20 @@ all of these:
   github.com/packwiz/packwiz@latest`), or set `PEXP_PACKWIZ`.
 - **Python 3.11+** with Pillow; **tmux**, **xvfb-run**, **curl**, **unzip**,
   **git**, `ss`, `dpkg-deb`, `sha256sum`.
-- Optional: **ffmpeg**, **xwininfo**/**xdpyinfo** (session recording),
-  **libXtst** (XTest clicks), an **NVIDIA GPU** with EGL (otherwise the
-  headless client falls back to Mesa llvmpipe).
 - **Node.js** on PATH or via nvm.
-- **[MCPFabric](https://github.com/denfry/mcpfabric)** checked out with its
-  MCP server built (`cd mcp-server && npm install && npm run build`), at
-  `~/tools/mcpfabric` or wherever `PEXP_MCPFABRIC_DIR` points. The matching
-  MCPFabric mod jar is downloaded from Modrinth at install time.
+- **[MCPFabric](https://github.com/denfry/mcpfabric)**: install its MCP
+  server by following that repo's instructions, then set
+  `PEXP_MCPFABRIC_DIR` to the checkout in the environment you start Claude
+  Code from. The template needs `mcp-server/dist/index.js` (the MCP server
+  `.mcp.json` runs) and `mcp-server/src/tools.ts` (the tool table
+  `scripts/mcf.py` reads). You don't install the MCPFabric mod: the install
+  scripts download the matching jar from Modrinth.
+- Optional:
+  - **ffmpeg** and **xwininfo**/**xdpyinfo**: session recording. Without
+    them the headless client still runs, but its sessions aren't recorded.
+  - **libXtst**: XTest clicks in the headless client's GUIs.
+  - An **NVIDIA GPU** with EGL: without one the headless client renders on
+    Mesa llvmpipe, which is slower and uses more CPU.
 
 The Claude Code hooks and helper scripts (`.claude/hooks/`,
 `.claude/scripts/`) are included in the repo.
@@ -60,7 +94,7 @@ The Claude Code hooks and helper scripts (`.claude/hooks/`,
 |---|---|---|
 | `PEXP_JAVA` | picked from the MC version | Java binary for the game and builds |
 | `PEXP_PACKWIZ` | `~/go/bin/packwiz` | packwiz binary |
-| `PEXP_MCPFABRIC_DIR` | `~/tools/mcpfabric` | MCPFabric checkout (MCP server, tool table) |
+| `PEXP_MCPFABRIC_DIR` | none (required) | MCPFabric checkout (MCP server, tool table) |
 | `PEXP_PORT_INVENTORY` | unset | optional host port inventory file for `doctor.sh` to check ports against |
 
 ## Starting an experiment
@@ -84,17 +118,22 @@ The Claude Code hooks and helper scripts (`.claude/hooks/`,
    port clashes with these sibling directories, and agents may read them
    (never write) for format and method.
 
-2. **Write the charter:** fill in `docs/charter.md` → "The owner's request"
+2. **Check the host:** run `scripts/doctor.sh` and fix anything it reports.
+   It is read-only. The four "`*_PORT` not set" failures are expected until
+   the ports are set (step 4); everything else should pass.
+
+3. **Write the charter:** fill in `docs/charter.md` → "The owner's request"
    and "Requirements, as rules", and delete the template defaults you don't
    want (agent-made art, FTB Quests, web research). Commit it.
 
-3. **Ports** (pick one):
+4. **Ports** (pick one):
    - Let the agents do it: the first item of Phase 0 is "Runtime setup".
      The orchestrator picks four free ports, fills
      `infrastructure/project.env`, installs the server and client and boots
      the empty pack.
-   - Or do it yourself before the first session: pick four free TCP ports
-     (two LAN-facing, two loopback), fill them into
+   - Or do it yourself before the first session: pick four free TCP ports,
+     `GAME_PORT` and `SERVE_PORT` (LAN-facing) and `SERVER_BRIDGE_PORT` and
+     `CLIENT_BRIDGE_PORT` (loopback only), fill them into
      `infrastructure/project.env`, then run
      `infrastructure/dev-server/bin/install.sh`,
      `infrastructure/headless-client/bin/install.sh` and
@@ -104,7 +143,7 @@ The Claude Code hooks and helper scripts (`.claude/hooks/`,
    with sibling experiments' `infrastructure/project.env` files (directories
    next to this one).
 
-4. **Run it:**
+5. **Run it:**
 
    ```sh
    claude
@@ -121,12 +160,14 @@ The Claude Code hooks and helper scripts (`.claude/hooks/`,
    `/pack-orchestrate process my playtest notes`).
 
 The MCP tools (`mc-server`, `mc-client`) only work once the ports are set,
-and load only in a session started after that. If the agents allocated the
-ports during the first session, restart Claude Code before Phase 1. On the
-first start Claude Code may ask you to approve the two project MCP servers;
-`.claude/settings.json` already lists them in `enabledMcpjsonServers`. The
-only permission rules the project sets allow `WebSearch` and `WebFetch`;
-you handle every other permission prompt.
+and load only in a session started after that. If the agents allocate the
+ports during Phase 0, the next session picks the tools up; that session is a
+fresh start anyway, because a session never crosses a phase boundary.
+
+On the first start Claude Code may ask you to approve the two project MCP
+servers; `.claude/settings.json` already lists them in
+`enabledMcpjsonServers`. The only permission rules the project sets allow
+`WebSearch` and `WebFetch`; you handle every other permission prompt.
 
 ## Playtesting
 
@@ -165,6 +206,11 @@ Check status with `infrastructure/dev-server/bin/status.sh`. To stop
 everything: `infrastructure/headless-client/bin/stop.sh`,
 `infrastructure/dev-server/bin/stop.sh`, `scripts/serve.sh --stop`.
 
+> **Security:** the dev server runs in offline mode with no whitelist, so
+> the headless bot can join. Anyone who can reach `GAME_PORT` can join under
+> any name, including an operator's. Keep `GAME_PORT` and `SERVE_PORT` on a
+> trusted LAN, and never port-forward them or expose them to the internet.
+
 Runtime state (server, world backups, client instance, HeadlessMC and
 download caches, the MCPFabric token) lives under `infrastructure/` and is
 gitignored. Each experiment downloads its own Minecraft client (~1 GB in
@@ -182,6 +228,6 @@ template, port generic fixes into it by hand, and keep pack-specific content
 
 [MIT](LICENSE). Third-party pieces the scripts download at install time
 (Minecraft, NeoForge, MCPFabric, HeadlessMC, VirtualGL, packwiz-installer,
-mods) keep their own licenses;
-`infrastructure/dev-server/bin/install.sh` writes `eula=true`: running
-it means you accept the [Minecraft EULA](https://www.minecraft.net/eula).
+mods) keep their own licenses.
+`infrastructure/dev-server/bin/install.sh` writes `eula=true`; by running it
+you accept the [Minecraft EULA](https://www.minecraft.net/eula).
